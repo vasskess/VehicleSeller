@@ -22,6 +22,8 @@ INSTALLED_APPS = [
     # External Apps #
     "rest_framework",
     "drf_spectacular",
+    # My Apps #
+    "VehicleSeller.accounts",
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,8 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+AUTH_USER_MODEL = "accounts.SellerUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
