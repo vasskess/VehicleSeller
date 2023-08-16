@@ -6,7 +6,10 @@ from VehicleSeller.core.vehicle_helpers.enum_helpers.euro_category import EuroCa
 from VehicleSeller.core.vehicle_helpers.enum_helpers.year_of_manufactoring import Year
 
 
-class Vehicle(models.Model):  # TODO think about custom validators if needed at some point !
+#  TODO Separate some of the fields to classes for better DB structure
+#  TODO think about custom validators if needed at some point !
+class Vehicle(models.Model):
+
     BRAND_MAX_LEN = 100
 
     VEHICLE_MODEL_MAX_LEN = 100
@@ -66,6 +69,10 @@ class Vehicle(models.Model):  # TODO think about custom validators if needed at 
     )
     is_used = models.BooleanField(default=False)
     seller = models.ForeignKey(SellerUser, on_delete=models.CASCADE)
+
+    @property
+    def manufactured(self):
+        return self.manufacturing_year.replace("YEAR_", "")
 
     def __str__(self):
         return f"{self.brand} {self.vehicle_model}"
