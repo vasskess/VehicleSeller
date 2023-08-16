@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     # My Apps #
     "VehicleSeller.accounts",
+    "VehicleSeller.vehicles",
 ]
 
 MIDDLEWARE = [

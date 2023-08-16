@@ -8,7 +8,7 @@ from VehicleSeller.core.account_helpers.phone_number_validator import (
 pytestmark = pytest.mark.django_db
 
 
-# TODO Might need refactoring plus some more test(this one for sure!)
+# TODO Might need refactoring plus some more tests -> (this one for sure!)
 
 
 class TestSellerUserModel:
