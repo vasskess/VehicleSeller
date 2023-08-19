@@ -10,12 +10,18 @@ from VehicleSeller.vehicles.models import (
     VehicleEngine,
     VehicleEuroStandard,
     VehicleColor,
+    VehicleImage,
 )
 
 excluded_fields = (
     "manufacturing_year",
     "id",
 )
+
+
+class VehicleImageInline(admin.TabularInline):
+    model = VehicleImage
+    extra = 1
 
 
 @admin.register(Vehicle)
@@ -33,6 +39,7 @@ class VehicleAdmin(admin.ModelAdmin):
         if field.name not in excluded_fields
     ]
     list_display.insert(6, "manufactured")
+    inlines = [VehicleImageInline]
 
 
 @admin.register(VehicleManufacturingYear)
