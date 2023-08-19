@@ -1,3 +1,4 @@
+from cloudinary.models import CloudinaryField
 from django.db import models
 from django.core.validators import MinValueValidator
 from VehicleSeller.accounts.models import SellerUser
@@ -42,6 +43,17 @@ class VehicleBrand(BaseNameModel):
 class VehicleModel(BaseNameModel):
     class Meta:
         verbose_name = "Vehicle Model"
+
+
+class VehicleImage(models.Model):
+    vehicle = models.ForeignKey(
+        "Vehicle",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="images",
+    )
+    vehicle_image = CloudinaryField(verbose_name="Vehicle Image", folder="Testing")
 
 
 class VehicleTransmission(BaseAttributesModel):

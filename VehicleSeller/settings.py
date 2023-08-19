@@ -1,6 +1,10 @@
 import environ
 from pathlib import Path
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 env = environ.Env()
 environ.Env.read_env()
 
@@ -22,6 +26,7 @@ INSTALLED_APPS = [
     # External Apps #
     "rest_framework",
     "drf_spectacular",
+    "cloudinary",
     # My Apps #
     "VehicleSeller.accounts",
     "VehicleSeller.vehicles",
@@ -67,6 +72,12 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+cloudinary.config(
+    cloud_name=env("CLOUD_NAME"),
+    api_key=env("API_KEY"),
+    api_secret=env("API_SECRET"),
+)
 
 AUTH_USER_MODEL = "accounts.SellerUser"
 
