@@ -151,4 +151,4 @@ class Vehicle(models.Model):
         return self.manufacturing_year.vehicle_manufacturing_year.replace("YEAR_", "")
 
     def __str__(self):
-        return f"{self.brand} - {self.model}"
+        return f"{self.brand.name} - {self.model.name}"
