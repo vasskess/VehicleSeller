@@ -83,3 +83,5 @@ class VehicleFactory(factory.django.DjangoModelFactory):
     color = factory.SubFactory(VehicleColorFactory)
     is_used = True
     seller = factory.SubFactory(UserFactory)
+
+#  TODO Maybe add more tests
