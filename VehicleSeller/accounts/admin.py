@@ -2,16 +2,20 @@ from django.contrib.auth import admin as auth_admin
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
+from VehicleSeller.accounts.models import ProfileImage
 from VehicleSeller.core.account_helpers.profile_model_helper import get_profile_model
 
 User = get_user_model()
 profile_model = get_profile_model()
 
 
+class ProfileImageInline(admin.TabularInline):
+    model = ProfileImage
+    extra = 1
+
+
 @admin.register(User)
 class SellerUserAdmin(auth_admin.UserAdmin):
-
-    model = User
     list_display = ("email", "is_staff", "is_superuser")
     fieldsets = (
         (None, {"fields": ("email",)}),
@@ -29,6 +33,7 @@ class SellerUserAdmin(auth_admin.UserAdmin):
             },
         ),
     )
+    inlines = [ProfileImageInline]
     ordering = ("email",)
 
 

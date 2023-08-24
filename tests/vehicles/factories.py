@@ -84,4 +84,5 @@ class VehicleFactory(factory.django.DjangoModelFactory):
     is_used = True
     seller = factory.SubFactory(UserFactory)
 
+
 #  TODO Maybe add more tests

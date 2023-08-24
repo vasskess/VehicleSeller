@@ -1,3 +1,4 @@
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import MinLengthValidator
@@ -82,11 +83,6 @@ class SellerProfile(models.Model):
         blank=True,
         verbose_name="Last Name",
     )
-    # seller_image = CloudinaryField(   TODO Install & Set up Cloudinary at some point !
-    #     null=True,
-    #     blank=True,
-    #     verbose_name="Seller Image",
-    # )
     location = models.CharField(
         max_length=LOCATION_MAX_LEN,
         validators=(MinLengthValidator(LOCATION_MIN_LEN, LOCATION_MIN_LEN_MESSAGE),),
@@ -117,3 +113,14 @@ class SellerProfile(models.Model):
 
     def __str__(self):
         return self.slug
+
+
+class ProfileImage(models.Model):
+    profile_img = models.ForeignKey(
+        SellerUser,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="profile_image",
+    )
+    profile_image = CloudinaryField(verbose_name="Profile Image", folder="Testing")
