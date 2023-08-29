@@ -22,6 +22,4 @@ class UserSerializer(serializers.ModelSerializer):
         except exceptions.ValidationError as e:
             raise serializers.ValidationError({"password": e.messages})
 
-        return my_user.objects.create_user(
-            **validated_data
-        )
+        return my_user.objects.create_user(**validated_data)
