@@ -1,9 +1,11 @@
 import factory
-from VehicleSeller.accounts.models import SellerUser
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = SellerUser
+        model = User
 
     email = factory.Sequence(lambda num: f"test_{num + 1}_user@example.com")
