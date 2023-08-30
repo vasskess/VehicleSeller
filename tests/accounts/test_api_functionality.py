@@ -1,7 +1,9 @@
+from django.core.validators import EmailValidator
 from django.test import TestCase
 from rest_framework.test import APIClient
-from rest_framework import status
+from rest_framework import status, serializers
 
+from VehicleSeller.accounts.serializers import AuthTokenSerializer
 from tests.helpers.account_test_helpers import (
     test_user,
     create_user,
@@ -29,7 +31,6 @@ class PublicAccountApiTests(TestCase):
         password_to_check = test_user.objects.get(email=seller_user["email"])
 
         self.assertTrue(password_to_check.check_password(seller_user["password"]))
-
         self.assertNotIn("password", result.data)
         """ Check that password is not presented in response ! """
 
@@ -58,10 +59,8 @@ class PublicAccountApiTests(TestCase):
 
         result = self.client.post(CREATE_USER_URL, seller_user)
 
-        expected_error_message = "Enter a valid email address."
-
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(result.data["email"][0], expected_error_message)
+        self.assertEqual(result.data["email"][0], EmailValidator.message)
 
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
@@ -79,6 +78,7 @@ class PublicAccountApiTests(TestCase):
         expected_error_message = (
             "This password is too short. It must contain at least 8 characters."
         )
+
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["password"][0], expected_error_message)
 
@@ -139,7 +139,7 @@ class PublicAccountApiTests(TestCase):
         self.assertIn("token", result.data)
         self.assertEqual(result.status_code, status.HTTP_200_OK)
 
-    def test_generate_token_for_user_with_invalid_email_doesnt_returns_token_and_returns_proper_status_code(
+    def test_generate_token_for_user_with_invalid_email_doesnt_returns_token__returns_proper_status_code(
         self,
     ):
         user_credentials = {
@@ -158,6 +158,27 @@ class PublicAccountApiTests(TestCase):
         self.assertNotIn("token", result.data)
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_generate_token_for_user_with_invalid_email_raises_proper_error_and_returns_proper_message(
+        self,
+    ):
+        user_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        create_user(**user_credentials)
+        seller_user = {
+            "email": "not_secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+        expected_error = "Please, provide valid credentials."
+
+        with self.assertRaises(serializers.ValidationError) as error:
+            AuthTokenSerializer().validate(seller_user)
+
+        exception = error.exception
+        self.assertEqual(str(exception.detail[0]), expected_error)
+
     def test_generate_token_for_user_with_invalid_password_doesnt_returns_token_and_returns_proper_status_code(
         self,
     ):
@@ -169,13 +190,35 @@ class PublicAccountApiTests(TestCase):
         create_user(**user_credentials)
         seller_user = {
             "email": "secret_email@mhmm.com",
-            "password": "notsecretPassword123",
+            "password": "not_secretPassword123",
         }
 
         result = self.client.post(GENERATE_TOKEN_URL, seller_user)
 
         self.assertNotIn("token", result.data)
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_generate_token_for_user_with_invalid_password_raises_proper_error_and_returns_proper_message(
+        self,
+    ):
+        user_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        create_user(**user_credentials)
+        seller_user = {
+            "email": "secret_email@mhmm.com",
+            "password": "not_secretPassword123",
+        }
+
+        expected_error = "Please, provide valid credentials."
+
+        with self.assertRaises(serializers.ValidationError) as error:
+            AuthTokenSerializer().validate(seller_user)
+
+        exception = error.exception
+        self.assertEqual(str(exception.detail[0]), expected_error)
 
     def test_generate_token_for_user_with_blank_password_doesnt_returns_token_and_returns_proper_status_code(
         self,
@@ -195,3 +238,25 @@ class PublicAccountApiTests(TestCase):
 
         self.assertNotIn("token", result.data)
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_generate_token_for_user_with_blank_password_raises_proper_error_and_returns_proper_message(
+        self,
+    ):
+        user_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        create_user(**user_credentials)
+        seller_user = {
+            "email": "secret_email@mhmm.com",
+            "password": "",
+        }
+
+        expected_error = "Please, provide valid credentials."
+
+        with self.assertRaises(serializers.ValidationError) as error:
+            AuthTokenSerializer().validate(seller_user)
+
+        exception = error.exception
+        self.assertEqual(str(exception.detail[0]), expected_error)
