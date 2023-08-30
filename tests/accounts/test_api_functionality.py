@@ -2,7 +2,12 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from tests.helpers.account_test_helpers import test_user, create_user, CREATE_USER_URL
+from tests.helpers.account_test_helpers import (
+    test_user,
+    create_user,
+    CREATE_USER_URL,
+    GENERATE_TOKEN_URL,
+)
 
 
 class PublicAccountApiTests(TestCase):
@@ -52,10 +57,12 @@ class PublicAccountApiTests(TestCase):
         }
 
         result = self.client.post(CREATE_USER_URL, seller_user)
+
         expected_error_message = "Enter a valid email address."
 
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["email"][0], expected_error_message)
+
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
 
@@ -68,11 +75,13 @@ class PublicAccountApiTests(TestCase):
         }
 
         result = self.client.post(CREATE_USER_URL, seller_user)
+
         expected_error_message = (
             "This password is too short. It must contain at least 8 characters."
         )
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["password"][0], expected_error_message)
+
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
 
@@ -86,8 +95,10 @@ class PublicAccountApiTests(TestCase):
 
         result = self.client.post(CREATE_USER_URL, seller_user)
         expected_error_message = "This password is too common."
+
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["password"][0], expected_error_message)
+
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
 
@@ -100,8 +111,87 @@ class PublicAccountApiTests(TestCase):
         }
 
         result = self.client.post(CREATE_USER_URL, seller_user)
+
         expected_error_message = "This password is entirely numeric."
+
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["password"][0], expected_error_message)
+
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
+
+    def test_generate_token_for_user_with_valid_credentials_returns_token_and_proper_status_code(
+        self,
+    ):
+        user_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        create_user(**user_credentials)
+        seller_user = {
+            "email": user_credentials["email"],
+            "password": user_credentials["password"],
+        }
+
+        result = self.client.post(GENERATE_TOKEN_URL, seller_user)
+
+        self.assertIn("token", result.data)
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+
+    def test_generate_token_for_user_with_invalid_email_doesnt_returns_token_and_returns_proper_status_code(
+        self,
+    ):
+        user_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        create_user(**user_credentials)
+        seller_user = {
+            "email": "not_secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        result = self.client.post(GENERATE_TOKEN_URL, seller_user)
+
+        self.assertNotIn("token", result.data)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_generate_token_for_user_with_invalid_password_doesnt_returns_token_and_returns_proper_status_code(
+        self,
+    ):
+        user_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        create_user(**user_credentials)
+        seller_user = {
+            "email": "secret_email@mhmm.com",
+            "password": "notsecretPassword123",
+        }
+
+        result = self.client.post(GENERATE_TOKEN_URL, seller_user)
+
+        self.assertNotIn("token", result.data)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_generate_token_for_user_with_blank_password_doesnt_returns_token_and_returns_proper_status_code(
+        self,
+    ):
+        user_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "11secretPassword22",
+        }
+
+        create_user(**user_credentials)
+        seller_user = {
+            "email": "secret_email@mhmm.com",
+            "password": "",
+        }
+
+        result = self.client.post(GENERATE_TOKEN_URL, seller_user)
+
+        self.assertNotIn("token", result.data)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)

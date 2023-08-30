@@ -8,5 +8,5 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
-class CreateTokenView(ObtainAuthToken):
+class GenerateTokenView(ObtainAuthToken):
     serializer_class = AuthTokenSerializer

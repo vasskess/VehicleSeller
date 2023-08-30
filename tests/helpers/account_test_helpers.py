@@ -3,6 +3,7 @@ from django.urls import reverse
 
 test_user = get_user_model()
 CREATE_USER_URL = reverse("account:create")
+GENERATE_TOKEN_URL = reverse("account:token")
 
 
 def create_user(**params):
