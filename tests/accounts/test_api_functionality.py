@@ -13,7 +13,7 @@ from tests.helpers.account_test_helpers import (
 
 
 class PublicAccountApiTests(TestCase):
-    def setUP(self):
+    def setUp(self):
         self.client = APIClient()
 
     def test_create_account_with_valid_credentials_creates_account_and_store_password_properly_in_db(
