@@ -4,7 +4,10 @@ from django.core import exceptions
 from rest_framework import serializers
 from django.utils.translation import gettext as _
 
+from VehicleSeller.core.account_helpers.profile_model_helper import get_profile_model
+
 my_user = get_user_model()
+my_profile = get_profile_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -39,6 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = my_profile
+        fields = ["first_name", "last_name", "location", "phone_number"]
 
 
 class AuthTokenSerializer(serializers.Serializer):

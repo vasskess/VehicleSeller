@@ -2,7 +2,11 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 
-from VehicleSeller.accounts.serializers import UserSerializer, AuthTokenSerializer
+from VehicleSeller.accounts.serializers import (
+    UserSerializer,
+    ProfileSerializer,
+    AuthTokenSerializer,
+)
 
 my_user = get_user_model()
 
@@ -23,3 +27,12 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class ManageProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.profile
