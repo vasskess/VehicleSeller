@@ -4,6 +4,7 @@ from django.urls import reverse
 test_user = get_user_model()
 CREATE_USER_URL = reverse("account:create")
 GENERATE_TOKEN_URL = reverse("account:token")
+USER_DETAILS_URL = reverse("account:user-details")
 
 
 def create_user(**params):
