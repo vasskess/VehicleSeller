@@ -15,15 +15,30 @@ class UserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True},
         }
 
-    def create(self, validated_data):
-        password = validated_data.get("password")
-
+    # TODO move this staticmethod as function if i`ll use it anywhere else, but most likely not !
+    @staticmethod
+    def _validate_password(password):
         try:
             validate_password(password)
         except exceptions.ValidationError as e:
             raise serializers.ValidationError({"password": e.messages})
 
+    def create(self, validated_data):
+        password = validated_data.get("password")
+        self._validate_password(password)
+
         return my_user.objects.create_user(**validated_data)
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            self._validate_password(password)
+            user.set_password(password)
+            user.save()
+
+        return user
 
 
 class AuthTokenSerializer(serializers.Serializer):
