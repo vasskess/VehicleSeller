@@ -46,8 +46,8 @@ class PublicAccountApiTests(TestCase):
 
         result = self.client.post(CREATE_USER_URL, seller_user)
 
-        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["email"][0], test_user.USERNAME_ERROR)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_account_with_invalid_email_returning_proper_error_message_status_code_and_user_is_not_created(
         self,
@@ -59,8 +59,8 @@ class PublicAccountApiTests(TestCase):
 
         result = self.client.post(CREATE_USER_URL, seller_user)
 
-        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["email"][0], EmailValidator.message)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
@@ -79,8 +79,8 @@ class PublicAccountApiTests(TestCase):
             "This password is too short. It must contain at least 8 characters."
         )
 
-        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["password"][0], expected_error_message)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
@@ -96,8 +96,8 @@ class PublicAccountApiTests(TestCase):
         result = self.client.post(CREATE_USER_URL, seller_user)
         expected_error_message = "This password is too common."
 
-        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["password"][0], expected_error_message)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
@@ -114,8 +114,8 @@ class PublicAccountApiTests(TestCase):
 
         expected_error_message = "This password is entirely numeric."
 
-        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(result.data["password"][0], expected_error_message)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
         user_exists = test_user.objects.filter(email=seller_user["email"]).exists()
         self.assertFalse(user_exists)
