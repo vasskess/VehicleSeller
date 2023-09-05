@@ -45,6 +45,19 @@ class PrivateAccountApiTests(TestCase):
         self.assertTrue(self.user.check_password(updated_credentials["password"]))
         self.assertEqual(result.status_code, status.HTTP_200_OK)
 
+    def test_put_method_with_existing_email_returns_proper_error_message_and_proper_status_code(
+        self,
+    ):
+        update_credentials = {
+            "email": "secret_email@mhmm.com",
+            "password": "passwordmhmm",
+        }
+
+        result = self.client.put(USER_DETAILS_URL, update_credentials)
+
+        self.assertEqual(result.data[0], test_user.USERNAME_ERROR)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_put_method_without_email_field_returns_proper_error_message_and_proper_status_code(
         self,
     ):
@@ -193,6 +206,16 @@ class PrivateAccountApiTests(TestCase):
         result = self.client.patch(USER_DETAILS_URL, updated_credentials)
 
         self.assertEqual(result.data["email"][0], EmailValidator.message)
+        self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_patch_method_with_existing_email_returns_proper_error_message_and_proper_status_code(
+        self,
+    ):
+        update_credentials = {"email": "secret_email@mhmm.com"}
+
+        result = self.client.patch(USER_DETAILS_URL, update_credentials)
+
+        self.assertEqual(result.data[0], test_user.USERNAME_ERROR)
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_patch_method_with_short_password_returning_proper_error_message_and_proper_status_code(

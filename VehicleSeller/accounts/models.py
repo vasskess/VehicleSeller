@@ -108,7 +108,7 @@ class SellerProfile(models.Model):
         ordering = ["-user"]
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.user.email.split("@")[0])
+        self.slug = slugify(self.user.email.split("@")[0] + str(self.user.id))
         super().save(*args, **kwargs)
 
     def __str__(self):
