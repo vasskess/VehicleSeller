@@ -122,18 +122,48 @@ class Vehicle(models.Model):
     PRICE_DECIMAL_PLACES = 2
     PRICE_MIN_VALUE = 0
 
-    brand = models.ForeignKey(VehicleBrand, on_delete=models.PROTECT)
-    model = models.ForeignKey(VehicleModel, on_delete=models.PROTECT)
-    transmission = models.ForeignKey(VehicleTransmission, on_delete=models.PROTECT)
-    engine_type = models.ForeignKey(VehicleEngine, on_delete=models.PROTECT)
-    euro_standard = models.ForeignKey(VehicleEuroStandard, on_delete=models.PROTECT)
+    brand = models.ForeignKey(
+        VehicleBrand,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+    )
+    model = models.ForeignKey(
+        VehicleModel,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+    )
+    transmission = models.ForeignKey(
+        VehicleTransmission,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+    )
+    engine_type = models.ForeignKey(
+        VehicleEngine,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+    )
+    euro_standard = models.ForeignKey(
+        VehicleEuroStandard,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+    )
     manufacturing_year = models.ForeignKey(
-        VehicleManufacturingYear, on_delete=models.PROTECT
+        VehicleManufacturingYear,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
     )
     price = models.DecimalField(
         max_digits=PRICE_MAX_DIGITS,
         decimal_places=PRICE_DECIMAL_PLACES,
         validators=[MinValueValidator(PRICE_MIN_VALUE)],
+        null=False,
+        blank=False,
         verbose_name="Price",
     )
     mileage = models.PositiveIntegerField(

@@ -72,15 +72,15 @@ class SellerProfile(models.Model):
         validators=(
             MinLengthValidator(FIRST_NAME_MIN_LEN, FIRST_NAME_MIN_LEN_MESSAGE),
         ),
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         verbose_name="First Name",
     )
     last_name = models.CharField(
         max_length=LAST_NAME_MAX_LEN,
         validators=(MinLengthValidator(LAST_NAME_MIN_LEN, LAST_NAME_MIN_LEN_MESSAGE),),
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         verbose_name="Last Name",
     )
     location = models.CharField(
@@ -108,7 +108,7 @@ class SellerProfile(models.Model):
         ordering = ["-user"]
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.user.email.split("@")[0] + str(self.user.id))
+        self.slug = slugify(self.user.email.split("@")[0] + "-" + str(self.user.id))
         super().save(*args, **kwargs)
 
     def __str__(self):
