@@ -18,7 +18,21 @@ class PrivateAccountApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_method_for_user_details_endpoint_returns_proper_user_and_proper_status_code(
+    def test_creating_user_also_creates_profile_with_empty_profile_fields_and_proper_slug(
+        self,
+    ):
+        profile = self.user.profile
+
+        self.assertEqual(self.user.pk, self.user.profile.pk)
+        self.assertEqual(profile.first_name, "")
+        self.assertEqual(profile.last_name, "")
+        self.assertEqual(profile.location, "")
+        self.assertEqual(profile.phone_number, "")
+        self.assertEqual(
+            f"{self.user.email.split('@')[0]}-{self.user.pk}", profile.slug
+        )
+
+    def test_get_method_for_user_details_endpoint_returns_proper_user_proper_slug_and_proper_status_code(
         self,
     ):
         result = self.client.get(USER_DETAILS_URL)
@@ -27,6 +41,7 @@ class PrivateAccountApiTests(TestCase):
             result.data,
             {
                 "email": self.user.email,
+                "slug": self.user.profile.slug,
             },
         )
         self.assertEqual(result.status_code, status.HTTP_200_OK)

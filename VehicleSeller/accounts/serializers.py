@@ -11,9 +11,11 @@ my_profile = get_profile_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    slug = serializers.ReadOnlyField(source="profile.slug")
+
     class Meta:
         model = my_user
-        fields = ["email", "password"]
+        fields = ["email", "password", "slug"]
         extra_kwargs = {
             "password": {"write_only": True},
         }
