@@ -18,7 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True},
         }
 
-    # TODO move this staticmethod`s as functions if i`ll use it anywhere else, but most likely not !
     @staticmethod
     def _validate_password(password):
         try:
@@ -63,6 +62,34 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = my_profile
         fields = ["first_name", "last_name", "location", "phone_number"]
+
+    def update(self, instance, validated_data):
+        for field_name, value in validated_data.items():
+            setattr(instance, field_name, value)
+        instance.save()
+
+        return instance
+        # =========================================================
+        # first_name = validated_data.pop("first_name", None)
+        # last_name = validated_data.pop("last_name", None)
+        # location = validated_data.pop("location", None)
+        # phone_number = validated_data.pop("phone_number", None)
+        # profile = super().update(instance, validated_data)
+        #
+        # if first_name:
+        #     profile.first_name = first_name
+        # if last_name:
+        #     profile.last_name = last_name
+        # if location:
+        #     profile.location = location
+        # if phone_number:
+        #     profile.phone_number = phone_number
+        # profile.save()
+        #
+        # return profile
+        # =========================================================
+        # This ^^^ approach is more explicit and provides a clear and separate check for each field before updating it,
+        # but i`ts ugly !
 
 
 class AuthTokenSerializer(serializers.Serializer):
