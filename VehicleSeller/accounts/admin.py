@@ -18,7 +18,15 @@ class ProfileImageInline(admin.TabularInline):
 class SellerUserAdmin(auth_admin.UserAdmin):
     list_display = ("email", "is_staff", "is_superuser")
     fieldsets = (
-        (None, {"fields": ("email",)}),
+        (
+            None,
+            {
+                "fields": (
+                    "email",
+                    "password",
+                )
+            },
+        ),
         (
             "Permissions",
             {"fields": ("is_active", "is_staff", "groups", "is_superuser")},
