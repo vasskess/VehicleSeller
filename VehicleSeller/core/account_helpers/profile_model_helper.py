@@ -4,4 +4,4 @@ User = get_user_model()
 
 
 def get_profile_model():
-    return User._meta.get_field("profile").remote_field.model
+    return User.profile.related.related_model
