@@ -11,4 +11,5 @@ urlpatterns = [
         name="api-docs",
     ),
     path("api/account/", include("VehicleSeller.accounts.urls")),
+    path("api/vehicles/", include("VehicleSeller.vehicles.urls")),
 ]

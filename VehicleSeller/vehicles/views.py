@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import generics, authentication, permissions
 
-# Create your views here.
+from VehicleSeller.vehicles.serializers import VehicleSerializer
+
+
+class CreateVehicleView(generics.CreateAPIView):
+    serializer_class = VehicleSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
